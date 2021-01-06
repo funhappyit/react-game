@@ -12,49 +12,58 @@
     <div id="root"></div>
     <script type="text/babel">
       class GuGuDan extends React.Component{
-        constructor(props){
-            super(props);
+       
             //바뀌는 부분은 state 수동으로 바뀔부분만 state로 만듬
-            this.state = {
-                first: Math.ceil(Math.random()*9),
-                second: Math.ceil(Math.random()*9),
-                value: '',
-                result: '',
-                resultval: '',
-            };
-        }
+        state = {
+            first: Math.ceil(Math.random()*9),
+            second: Math.ceil(Math.random()*9),
+            value: '',
+            result: '',
+            resultval: '',
+        };
+          
         onSubmit=(e)=>{
                 e.preventDefault();
+                //setState안에 this.state가 있으면 prevState 사용 
+                //setState가 호출될때마다 render()호출
                 if(parseInt(this.state.value) === this.state.first * this.state.second){
-                    this.setState({
+                    this.setState((prevState) =>{ 
+                    return{
                         result:'은 정답',
                         first:Math.ceil(Math.random()*9),
                         second:Math.ceil(Math.random()*9),
                         value:'',
-                        resultval: this.state.value,
-                    });
+                        resultval: prevState.value,
+                    };
+                });
+                this.input.focus();
                 }else{
                     this.setState({
                         result:'땡',
                         value:'',
                         resultval: '',
-                    });
+                });
+                this.input.focus();
             }
         };
         onChange= (e) => {
             this.setState({ value:e.target.value })
         };
+        onRefInput = (c) =>{
+            this.input = c;
+        }
+        input;
         //input.onchange = function(e){console.log(e.target.value)}
         render(){
             return (
-                <div>
+                <React.Fragment>
                     <div>{this.state.first} 곱하기 {this.state.second}는?</div>
                     <form onSubmit={this.onSubmit}>
-                        <input type="number" value={this.state.value} onChange={this.onChange}/>
+                        <input type="number" ref={this.onRefInput} value={this.state.value} onChange={this.onChange}/>
                         <button>입력</button>    
                     </form>
                     <div>{this.state.resultval} {this.state.result}</div>
-                </div>
+                </React.Fragment>
             );
         }
       }
