@@ -22,7 +22,7 @@
             };
             const onSubmitForm = (e) => {
                 e.preventDefault();
-                if(parseInt(this.state.value) === this.state.first * this.state.second){
+                if(parseInt(value) === first * second){
                     setResult('정답: '+value);
                     setFirst(Math.ceil(Math.random() * 9));
                     setSecond(Math.ceil(Math.random() * 9));
@@ -34,9 +34,10 @@
                     inputRef.current.focus();
                 }
             };
+            //class => className for => htmlFor
             return (<React.Fragment>
                 <div>{first} 곱하기 {second}는?</div>
-                <form onSubmit={}>
+                <form onSubmit={onSubmitForm}>
                     <input ref={inputRef} onChange={onChangeInput} value={value}/> 
                     <button>입력!</button>   
                     <div id="result">{result}</div>
@@ -45,6 +46,7 @@
             );
         }
     </script>
+    
      <script type="text/babel">
         ReactDOM.render(<GuGuDan/>,document.querySelector('#root'));
      </script>       
