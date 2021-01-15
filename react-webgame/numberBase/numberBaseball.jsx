@@ -19,7 +19,7 @@ class numberBaseball extends Component {
         tries:[], // push 쓰면 안 돼요 
     };
     onSubmitForm = (e) => {
-        const {value,answer, tries} = this.state;
+        const {value, answer, tries} = this.state;
         e.preventDefault();
         if(value === answer.join('')){
             this.setState({
