@@ -1,55 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script crossorigin src="https://unpkg.com/react@17/umd/react.development.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.25.0/babel.min.js"></script>
-    <title>Document</title>
+    <title>숫자야구</title>
 </head>
 <body>
-    <div id="root"></div><!--<div id="root"><button>Like</button></div>   -->
-    <script type="text/babel">
-        //createElement는 태그를 만들어 주는 함수
-        //const e = React.createElement;
-        //LikeButton이라는 컴포넌트 
-        class LikeButtton extends React.Component{
-            constructor(props){
-                super(props);
-                 //바뀔 여지가 있는 부분이 상태(state) 입니다.
-                this.state = {
-                    liked:false,
-
-                };
-            }
-            render(){
-                //<button onclick="() => {console.log('clicked')}" type="submit">Like</button>
-                return <button type="submit" onClick={() => {this.setState({liked:true})}}>
-                    {this.state.liked === true ? '좋아요 누름' : '좋아요'}
-                    </button>;
-                //JSX (JS+XML)
-                /*
-                e('button',{onClick:()=>{this.setState({liked:true})}, type:'submit'},
-                this.state.liked === true? 'Liked':'Like',
-                );
-                */
-                
-                //<button>Like</button>이런 태그를 만들겠다 
-            }
-        }
-    </script>
-    <script type="text/babel">
-       /*
-        리액트롤 어떻게 컴포넌트를 만들겠다.ReactDOM이 실제로 렌더링을 해준다.
-        LikeButton이라는 컴포넌트를 root안에 그리겠다.
-       */
-       ReactDOM.render(<div>
-        <LikeButtton />
-        <LikeButtton />
-        <LikeButtton />
-        <LikeButtton />
-        </div>,document.querySelector('#root'));
-    </script>
+    <div id="root"></div>
+    <script src="./dist/app.js"></script>
 </body>
 </html>
