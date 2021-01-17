@@ -1,5 +1,5 @@
 //require은 node의 모듈 시스템
-import React,{ Component } from 'react';
+import React,{ PureComponent,createRef } from 'react';
 import Try from './Try';
 
 function getNumbers(){//숫자 네 개를 겹치지 않고 랜덤하게 뽑는 함수 
@@ -11,7 +11,7 @@ function getNumbers(){//숫자 네 개를 겹치지 않고 랜덤하게 뽑는 �
     }
     return array;
 }
-class numberBaseball extends Component {
+class numberBaseball extends PureComponent {
     state = {
         result:'',
         value: '',
@@ -26,6 +26,7 @@ class numberBaseball extends Component {
                 result:'홈런',
                 tries: [...tries, {try: value, result:'홈런!'}],
             })
+            this.inputRef.current.focus();
         }else{ // 답 틀렸으면
             const answerArray = value.split('').map((v) => parseInt(v));
             let strike = 0;
@@ -40,6 +41,7 @@ class numberBaseball extends Component {
                     answer: getNumbers(),
                     tries: [],
                 });
+                this.inputRef.current.focus();
             } else {
                 for(let i=0; i < 4; i += 1){
                     if(answerArray[i] === answer[i]){
@@ -61,14 +63,19 @@ class numberBaseball extends Component {
             value: e.target.value,
         });
     };
+    inputRef = createRef();
+  //  onInputRef = (c) => {this.inputRef = c};
+
     render(){
         const {result, value, tries} = this.state;
-       return(
+       //this.setState를 하면 render가 발생되므로 무한 반복이 생겨 문제가 생긴다. 
+       // render안에 this.setState를 쓰지 않도록 주의한다. 
+        return(
            <>
                 <h1>{result}</h1>
                 <form onSubmit={this.onSubmitForm}>
                     {/* 주석 */}
-                    <input maxLength={4} value={value} onChange={this.onChangeInput}/>   
+                    <input ref={(c) => {this.onInputRef}} maxLength={4} value={value} onChange={this.onChangeInput}/>   
                 </form>
                 <div>시도:{tries.length}</div>
                 <ul>
