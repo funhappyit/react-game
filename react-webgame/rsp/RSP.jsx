@@ -33,12 +33,14 @@ class RSP extends Component {
     componentDidMount() { // 컴포넌트가 첫 렌더링된후 -> 비동기 요청을 많이 해요
         //clearInterval를 해줘야지 메모리 누수가 생기지 않는다.
         //비동기가 바깥에 있는 변수를 참조하면 closer발생
+        console.log('이벤트');
         this.interval = setInterval(this.changeHand, 100);
     }
     componentDidUpdate(){//리렌더링 후 
 
     }
     componentWillUnmount() {//컴포넌트가 제거되기 직전 -> 비동기 요청 정리를 많이 해요
+        console.log('이벤트2');
         clearInterval(this.interval);
     }
     changeHand = () => {
