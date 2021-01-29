@@ -11,6 +11,7 @@ function getNumbers(){//숫자 네 개를 겹치지 않고 랜덤하게 뽑는 �
     }
     return array;
 }
+// nextContext =>  A->B->C->D->E->F->G A에서 바로 G로 전달해주는게 nextContext
 class numberBaseball extends PureComponent {
     state = {
         result:'',
