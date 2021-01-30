@@ -6,7 +6,8 @@ import LottoHook from './lottoHook';
 import RenderTest from './RenderTest';
 import ResponseCheck from './ResponseCheck';
 import ResponseCheckHook from './ResponseCheckHook';
+import TicTacToe from './ticTacToc';
 
 //const Hot = hot(numberBaseball);
-const Hot =  hot(LottoHook);
+const Hot =  hot(TicTacToe);
 ReactDOM.render(<Hot/>, document.querySelector('#root'));
