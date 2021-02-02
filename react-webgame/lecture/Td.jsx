@@ -3,11 +3,6 @@ import { CLICK_CELL, CHANGE_TURN } from './ticTacToc';
 
 const Td = memo(({rowIndex, cellIndex, dispatch, CellData}) => {
     //렌더링
-
-   
-
-   
-    
     const onClickTd = useCallback(() => {
         //기존에 있던 CellData가 있으면 return 
         if(CellData){
