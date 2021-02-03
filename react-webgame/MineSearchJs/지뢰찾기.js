@@ -2,6 +2,7 @@ var tbody = document.querySelector("#table tbody");
 var dataset = [];
 //queryselector권장
 document.querySelector("#exec").addEventListener("click", function () {
+  tbody.innerHTML = "";
   var hor = parseInt(document.querySelector("#hor").value);
   var ver = parseInt(document.querySelector("#ver").value);
   var mine = parseInt(document.querySelector("#mine").value);
@@ -35,10 +36,23 @@ document.querySelector("#exec").addEventListener("click", function () {
         var 부모tr = e.currentTarget.parentNode;
         var 부모tbody = e.currentTarget.parentNode.parentNode;
         //나자신이 몇번째에 들어있는지를 알아내기 위해서
+        //children은 유사배열이여서 Array.prototype.indexOf.call를 사용해야한다.
         var 칸 = Array.prototype.indexOf.call(부모tr.children, e.currentTarget);
         var 줄 = Array.prototype.indexOf.call(부모tbody.children, 부모tr);
-        e.currentTarget.textContent = "!";
-        dataset[줄][칸] = "!";
+        if (
+          e.currentTarget.textContent === "" ||
+          e.currentTarget.textContent === "X"
+        ) {
+          e.currentTarget.textContent = "!";
+        } else if (e.currentTarget.textContent === "!") {
+          e.currentTarget.textContent = "?";
+        } else if (e.currentTarget.textContent === "?") {
+          if (dataset[줄][칸] === 1) {
+            e.currentTarget.textContent = "";
+          } else if (dataset[줄][칸] === "X") {
+            e.currentTarget.textContent = "X";
+          }
+        }
       });
       tr.appendChild(td);
     }
@@ -54,5 +68,8 @@ document.querySelector("#exec").addEventListener("click", function () {
     tbody.children[세로].children[가로].textContent = "X";
     dataset[세로][가로] = "X";
   }
-  console.log(dataset);
 });
+/**
+e.currentTarget();
+e.target();
+*/
