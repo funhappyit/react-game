@@ -2,6 +2,7 @@ var tbody = document.querySelector("#table tbody");
 var dataset = [];
 //queryselector권장
 document.querySelector("#exec").addEventListener("click", function () {
+  //내부 초기화
   tbody.innerHTML = "";
   var hor = parseInt(document.querySelector("#hor").value);
   var ver = parseInt(document.querySelector("#ver").value);
@@ -52,6 +53,37 @@ document.querySelector("#exec").addEventListener("click", function () {
           } else if (dataset[줄][칸] === "X") {
             e.currentTarget.textContent = "X";
           }
+        }
+      });
+      td.addEventListener("click", function (e) {
+        //클릭했을때 주변 지뢰 개수
+        var 부모tr = e.currentTarget.parentNode;
+        var 부모tbody = e.currentTarget.parentNode.parentNode;
+        var 칸 = Array.prototype.indexOf.call(부모tr.children, e.currentTarget);
+        var 줄 = Array.prototype.indexOf.call(부모tbody.children, 부모tr);
+        if (dataset[줄][칸] === "X") {
+          e.currentTarget.textContent = "펑";
+        } else {
+          var 주변 = [dataset[줄][칸 - 1], dataset[줄][칸 + 1]];
+          if (dataset[줄 - 1]) {
+            //concat은 배열과 배열을 합쳐서 "새로운" 배열을 만들어요
+            //concat은 새로운 배열을 만들고 다시 주변에 넣어야 한다.
+            주변 = 주변.concat(
+              dataset[줄 - 1][칸 - 1],
+              dataset[줄 - 1][칸],
+              dataset[줄 - 1][칸 + 1]
+            );
+          }
+          if (dataset[줄 + 1]) {
+            주변 = 주변.concat(
+              dataset[줄 + 1][칸 - 1],
+              dataset[줄 + 1][칸],
+              dataset[줄 + 1][칸 + 1]
+            );
+          }
+          e.currentTarget.textContent = 주변.filter(function (v) {
+            return v === "X";
+          }).length; //숫자
         }
       });
       tr.appendChild(td);
