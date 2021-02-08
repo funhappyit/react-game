@@ -31,7 +31,7 @@ document.querySelector("#exec").addEventListener("click", function () {
     var tr = document.createElement("tr");
     dataset.push(arr);
     for (var j = 0; j < hor; j += 1) {
-      arr.push(1);
+      arr.push(0);
       var td = document.createElement("td");
       //마우스 오른쪽이벤트는 contextmenu입니다.
       td.addEventListener("contextmenu", function (e) {
@@ -63,32 +63,35 @@ document.querySelector("#exec").addEventListener("click", function () {
           태그 classList로 태그의 클래스에 접근, add나 remove로 추가 삭제
           == $(this).addClass("opened"); 
          */
-        e.currentTarget.classList.add("opened");
 
         var 부모tr = e.currentTarget.parentNode;
         var 부모tbody = e.currentTarget.parentNode.parentNode;
         var 칸 = Array.prototype.indexOf.call(부모tr.children, e.currentTarget);
         var 줄 = Array.prototype.indexOf.call(부모tbody.children, 부모tr);
+        e.currentTarget.classList.add("opened");
+
         if (dataset[줄][칸] === "X") {
           e.currentTarget.textContent = "펑";
         } else {
+          //주변지뢰
+
           var 주변 = [dataset[줄][칸 - 1], dataset[줄][칸 + 1]];
           if (dataset[줄 - 1]) {
             //concat은 배열과 배열을 합쳐서 "새로운" 배열을 만들어요
             //concat은 새로운 배열을 만들고 다시 주변에 넣어야 한다.
 
-            주변 = 주변.concat(
+            주변 = 주변.concat([
               dataset[줄 - 1][칸 - 1],
               dataset[줄 - 1][칸],
-              dataset[줄 - 1][칸 + 1]
-            );
+              dataset[줄 - 1][칸 + 1],
+            ]);
           }
           if (dataset[줄 + 1]) {
-            주변 = 주변.concat(
+            주변 = 주변.concat([
               dataset[줄 + 1][칸 - 1],
               dataset[줄 + 1][칸],
-              dataset[줄 + 1][칸 + 1]
-            );
+              dataset[줄 + 1][칸 + 1],
+            ]);
           }
           var 주변지뢰개수 = 주변.filter(function (v) {
             return v === "X";
@@ -119,12 +122,26 @@ document.querySelector("#exec").addEventListener("click", function () {
             }
             //주변에서 undefined,null,0,빈문자열을 제거하는 코드
             //주변칸.filter((v) => !!v).forEach;
+            dataset[줄][칸] = 1;
             주변칸
               .filter(function (v) {
                 return !!v;
               })
               .forEach(function (옆칸) {
-                옆칸.click();
+                console.log("옆칸" + dataset);
+                var 부모tr = 옆칸.parentNode;
+                var 부모tbody = 옆칸.parentNode.parentNode;
+                var 옆칸칸 = Array.prototype.indexOf.call(
+                  부모tr.children,
+                  옆칸
+                );
+                var 옆칸줄 = Array.prototype.indexOf.call(
+                  부모tbody.children,
+                  부모tr
+                );
+                if (dataset[옆칸줄][옆칸칸] !== 1) {
+                  옆칸.click();
+                }
               });
           }
         }
