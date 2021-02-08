@@ -5,6 +5,7 @@ var dataset = [];
 document.querySelector("#exec").addEventListener("click", function () {
   //내부 초기화
   tbody.innerHTML = "";
+  dataset = [];
   var hor = parseInt(document.querySelector("#hor").value);
   var ver = parseInt(document.querySelector("#ver").value);
   var mine = parseInt(document.querySelector("#mine").value);
@@ -58,6 +59,12 @@ document.querySelector("#exec").addEventListener("click", function () {
       });
       td.addEventListener("click", function (e) {
         //클릭했을때 주변 지뢰 개수
+        /**
+          태그 classList로 태그의 클래스에 접근, add나 remove로 추가 삭제
+          == $(this).addClass("opened"); 
+         */
+        e.currentTarget.classList.add("opened");
+
         var 부모tr = e.currentTarget.parentNode;
         var 부모tbody = e.currentTarget.parentNode.parentNode;
         var 칸 = Array.prototype.indexOf.call(부모tr.children, e.currentTarget);
@@ -83,9 +90,43 @@ document.querySelector("#exec").addEventListener("click", function () {
               dataset[줄 + 1][칸 + 1]
             );
           }
-          e.currentTarget.textContent = 주변.filter(function (v) {
+          var 주변지뢰개수 = 주변.filter(function (v) {
             return v === "X";
           }).length; //숫자
+          e.currentTarget.textContent = 주변지뢰개수;
+          if (주변지뢰개수 === 0) {
+            //주변 8칸 동시 오픈 (재귀 함수)
+            //주변지뢰개수를 찾는 것처럼 주변칸을 배열로 모으는 코드
+            //재귀 형식으로 코딩할 때는 효율성을 체크해야 합니다.
+            var 주변칸 = [];
+            if (tbody.children[줄 - 1]) {
+              주변칸 = 주변칸.concat([
+                tbody.children[줄 - 1].children[칸 - 1],
+                tbody.children[줄 - 1].children[칸],
+                tbody.children[줄 - 1].children[칸 + 1],
+              ]);
+            }
+            주변칸 = 주변칸.concat([
+              tbody.children[줄].children[칸 - 1],
+              tbody.children[줄].children[칸 + 1],
+            ]);
+            if (tbody.children[줄 + 1]) {
+              주변칸 = 주변칸.concat([
+                tbody.children[줄 + 1].children[칸 - 1],
+                tbody.children[줄 + 1].children[칸],
+                tbody.children[줄 + 1].children[칸 + 1],
+              ]);
+            }
+            //주변에서 undefined,null,0,빈문자열을 제거하는 코드
+            //주변칸.filter((v) => !!v).forEach;
+            주변칸
+              .filter(function (v) {
+                return !!v;
+              })
+              .forEach(function (옆칸) {
+                옆칸.click();
+              });
+          }
         }
       });
       tr.appendChild(td);
@@ -213,9 +254,11 @@ setTimeout(function(){
       setTimeout(function(){
         공색칠하기(당첨숫자들[j],결과창);
       },(j+1)*1000);
-    })(i);//즉시 실행함수로 클로저 막음 
+    })(i);
   }
 
+  //재귀함수 예
+  function 
 
 
 

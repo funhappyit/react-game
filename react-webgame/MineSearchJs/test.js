@@ -1,7 +1,10 @@
-for (var i = 0; i < 100; i++) {
-  (function 클로저(j) {
-    setTimeout(function (i) {
-      console.log(j);
-    }, j * 1000);
-  })(i);
+//재귀는 반복문을 함수로 표현하는 방법
+//재귀함수를 이해해야지 프로그램을 이해하기 쉽다 stackoverflow 개발 사이트
+function 재귀함수(숫자) {
+  console.log(숫자);
+  if (숫자 < 5) {
+    재귀함수(숫자 + 1);
+  }
 }
+
+재귀함수(1);
