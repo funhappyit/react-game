@@ -1,16 +1,29 @@
 var tbody = document.querySelector("#table tbody");
 var dataset = [];
+var 중단플래그 = false;
+var 열은칸 = 0;
+var 코드표 = {
+  연칸: -1,
+  물음표: -2,
+  깃발: -3,
+  깃발지뢰: -4,
+  물음표지뢰: -5,
+  지뢰: 1,
+  보통칸: 0,
+};
 //queryselector권장
 //변수는 자신을 감싸고 있는 함수 바깥으로 빠져나갈
 document.querySelector("#exec").addEventListener("click", function () {
   //내부 초기화
   tbody.innerHTML = "";
+  중단플래그 = false;
+  document.querySelector("#result").textContent = "";
   dataset = [];
+  열은칸 = 0;
   var hor = parseInt(document.querySelector("#hor").value);
   var ver = parseInt(document.querySelector("#ver").value);
   var mine = parseInt(document.querySelector("#mine").value);
 
-  console.log("가로" + hor + "세로" + ver + "지뢰" + mine);
   //지뢰 위치 뽑기
   //가로 * 세로 => 칸의 갯수
   var 후보군 = Array(hor * ver)
@@ -24,18 +37,22 @@ document.querySelector("#exec").addEventListener("click", function () {
     var 이동값 = 후보군.splice(Math.floor(Math.random() * 후보군.length), 1)[0];
     셔플.push(이동값);
   }
-  console.log("셔플" + 셔플);
+
   //지뢰 테이블 만들기
   for (var i = 0; i < ver; i += 1) {
     var arr = [];
     var tr = document.createElement("tr");
     dataset.push(arr);
     for (var j = 0; j < hor; j += 1) {
-      arr.push(0);
+      arr.push(코드표.보통칸);
       var td = document.createElement("td");
       //마우스 오른쪽이벤트는 contextmenu입니다.
       td.addEventListener("contextmenu", function (e) {
         e.preventDefault();
+        // return으로 함수의 실행을 중간에 끊을 수 있다.
+        if (중단플래그) {
+          return;
+        }
         var 부모tr = e.currentTarget.parentNode;
         var 부모tbody = e.currentTarget.parentNode.parentNode;
         //나자신이 몇번째에 들어있는지를 알아내기 위해서
@@ -47,31 +64,64 @@ document.querySelector("#exec").addEventListener("click", function () {
           e.currentTarget.textContent === "X"
         ) {
           e.currentTarget.textContent = "!";
+          if (dataset[줄][칸] === 코드표.지뢰) {
+            dataset[줄][칸] = 코드표.깃발지뢰;
+          } else {
+            dataset[줄][칸] = 코드표.깃발;
+          }
         } else if (e.currentTarget.textContent === "!") {
           e.currentTarget.textContent = "?";
+          if (dataset[줄][칸] === 코드표.깃발지뢰) {
+            dataset[줄][칸] = 코드표.물음표지뢰;
+          } else {
+            dataset[줄][칸] = 코드표.물음표;
+          }
         } else if (e.currentTarget.textContent === "?") {
-          if (dataset[줄][칸] === 1) {
-            e.currentTarget.textContent = "";
-          } else if (dataset[줄][칸] === "X") {
+          if (dataset[줄][칸] === 코드표.물음표지뢰) {
             e.currentTarget.textContent = "X";
+            dataset[줄][칸] = 코드표.지뢰;
+          } else {
+            e.currentTarget.textContent = "";
+            dataset[줄][칸] = 코드표.보통칸;
           }
         }
       });
       td.addEventListener("click", function (e) {
+        // return으로 함수의 실행을 중간에 끊을 수 있다.
+        if (중단플래그) {
+          return;
+        }
+        var 부모tr = e.currentTarget.parentNode;
+        var 부모tbody = e.currentTarget.parentNode.parentNode;
+        var 칸 = Array.prototype.indexOf.call(부모tr.children, e.currentTarget);
+        var 줄 = Array.prototype.indexOf.call(부모tbody.children, 부모tr);
+        //내칸을 클릭했을때 return 열려있는데 또 할 필요없어서
+        // OR가 많아질 경우 includes를 쓴다.
+        if (
+          [
+            코드표.연칸,
+            코드표.깃발,
+            코드표.깃발지뢰,
+            코드표.물음표지뢰,
+            코드표.물음표,
+          ].includes(dataset[줄][칸])
+        ) {
+          return;
+        }
+
         //클릭했을때 주변 지뢰 개수
         /**
           태그 classList로 태그의 클래스에 접근, add나 remove로 추가 삭제
           == $(this).addClass("opened"); 
          */
 
-        var 부모tr = e.currentTarget.parentNode;
-        var 부모tbody = e.currentTarget.parentNode.parentNode;
-        var 칸 = Array.prototype.indexOf.call(부모tr.children, e.currentTarget);
-        var 줄 = Array.prototype.indexOf.call(부모tbody.children, 부모tr);
+        //클릭했을때
         e.currentTarget.classList.add("opened");
-
-        if (dataset[줄][칸] === "X") {
+        열은칸 += 1;
+        if (dataset[줄][칸] === 코드표.지뢰) {
           e.currentTarget.textContent = "펑";
+          document.querySelector("#result").textContent = "실패 ㅠㅠ";
+          중단플래그 = true;
         } else {
           //주변지뢰
 
@@ -94,9 +144,11 @@ document.querySelector("#exec").addEventListener("click", function () {
             ]);
           }
           var 주변지뢰개수 = 주변.filter(function (v) {
-            return v === "X";
+            return v === 코드표.지뢰;
           }).length; //숫자
-          e.currentTarget.textContent = 주변지뢰개수;
+          //조건문같은 것에서 거짓인 값 '',0,NaN, null, undefined, false
+          e.currentTarget.textContent = 주변지뢰개수 || "";
+          dataset[줄][칸] = 코드표.연칸;
           if (주변지뢰개수 === 0) {
             //주변 8칸 동시 오픈 (재귀 함수)
             //주변지뢰개수를 찾는 것처럼 주변칸을 배열로 모으는 코드
@@ -122,13 +174,12 @@ document.querySelector("#exec").addEventListener("click", function () {
             }
             //주변에서 undefined,null,0,빈문자열을 제거하는 코드
             //주변칸.filter((v) => !!v).forEach;
-            dataset[줄][칸] = 1;
+
             주변칸
               .filter(function (v) {
                 return !!v;
               })
               .forEach(function (옆칸) {
-                console.log("옆칸" + dataset);
                 var 부모tr = 옆칸.parentNode;
                 var 부모tbody = 옆칸.parentNode.parentNode;
                 var 옆칸칸 = Array.prototype.indexOf.call(
@@ -139,10 +190,15 @@ document.querySelector("#exec").addEventListener("click", function () {
                   부모tbody.children,
                   부모tr
                 );
-                if (dataset[옆칸줄][옆칸칸] !== 1) {
+                if (dataset[옆칸줄][옆칸칸] !== 코드표.연칸) {
                   옆칸.click();
                 }
               });
+          }
+          //칸 수에다가 지뢰갯수 빼면 80개
+          if (열은칸 === hor * ver - mine) {
+            중단플래그 = true;
+            document.querySelector("#result").textContent = "승리 ㅅㅅ";
           }
         }
       });
@@ -158,7 +214,7 @@ document.querySelector("#exec").addEventListener("click", function () {
     var 가로 = Math.floor(셔플[k] / 10); //예 6 -> 5
     var 세로 = 셔플[k] % 10; // 예 9-> 8
     tbody.children[세로].children[가로].textContent = "X";
-    dataset[세로][가로] = "X";
+    dataset[세로][가로] = 코드표.지뢰;
   }
 });
 /**
