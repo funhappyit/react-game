@@ -19,7 +19,7 @@ document.querySelector("#exec").addEventListener("click", function () {
   중단플래그 = false;
   document.querySelector("#result").textContent = "";
   dataset = [];
-  열은칸 = 0;
+  열은칸 = 코드표.보통칸;
   var hor = parseInt(document.querySelector("#hor").value);
   var ver = parseInt(document.querySelector("#ver").value);
   var mine = parseInt(document.querySelector("#mine").value);
@@ -33,7 +33,7 @@ document.querySelector("#exec").addEventListener("click", function () {
     });
 
   var 셔플 = [];
-  while (후보군.length > 80) {
+  while (후보군.length > hor * ver - mine) {
     var 이동값 = 후보군.splice(Math.floor(Math.random() * 후보군.length), 1)[0];
     셔플.push(이동값);
   }
@@ -64,6 +64,7 @@ document.querySelector("#exec").addEventListener("click", function () {
           e.currentTarget.textContent === "X"
         ) {
           e.currentTarget.textContent = "!";
+          e.currentTarget.classList.add("flag");
           if (dataset[줄][칸] === 코드표.지뢰) {
             dataset[줄][칸] = 코드표.깃발지뢰;
           } else {
@@ -71,12 +72,15 @@ document.querySelector("#exec").addEventListener("click", function () {
           }
         } else if (e.currentTarget.textContent === "!") {
           e.currentTarget.textContent = "?";
+          e.currentTarget.classList.remove("flag");
+          e.currentTarget.classList.add("question");
           if (dataset[줄][칸] === 코드표.깃발지뢰) {
             dataset[줄][칸] = 코드표.물음표지뢰;
           } else {
             dataset[줄][칸] = 코드표.물음표;
           }
         } else if (e.currentTarget.textContent === "?") {
+          e.currentTarget.classList.remove("question");
           if (dataset[줄][칸] === 코드표.물음표지뢰) {
             e.currentTarget.textContent = "X";
             dataset[줄][칸] = 코드표.지뢰;
@@ -144,7 +148,9 @@ document.querySelector("#exec").addEventListener("click", function () {
             ]);
           }
           var 주변지뢰개수 = 주변.filter(function (v) {
-            return v === 코드표.지뢰;
+            return [코드표.지뢰, 코드표.깃발지뢰, 코드표.물음표지뢰].includes(
+              v
+            );
           }).length; //숫자
           //조건문같은 것에서 거짓인 값 '',0,NaN, null, undefined, false
           e.currentTarget.textContent = 주변지뢰개수 || "";
@@ -211,8 +217,8 @@ document.querySelector("#exec").addEventListener("click", function () {
     // 예 59
     // 59
     //배열은 index가 -1이 나오면 안됀다.
-    var 가로 = Math.floor(셔플[k] / 10); //예 6 -> 5
-    var 세로 = 셔플[k] % 10; // 예 9-> 8
+    var 가로 = Math.floor(셔플[k] / ver); //예 6 -> 5
+    var 세로 = 셔플[k] % ver; // 예 9-> 8
     tbody.children[세로].children[가로].textContent = "X";
     dataset[세로][가로] = 코드표.지뢰;
   }
