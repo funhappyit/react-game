@@ -20,6 +20,7 @@ document.querySelector("#exec").addEventListener("click", function () {
   document.querySelector("#result").textContent = "";
   dataset = [];
   열은칸 = 코드표.보통칸;
+  //hor 가로 , ver 세로 , mine 지뢰
   var hor = parseInt(document.querySelector("#hor").value);
   var ver = parseInt(document.querySelector("#ver").value);
   var mine = parseInt(document.querySelector("#mine").value);
@@ -33,7 +34,9 @@ document.querySelector("#exec").addEventListener("click", function () {
     });
 
   var 셔플 = [];
-  while (후보군.length > hor * ver - mine) {
+
+  //while (후보군.length > hor * ver - mine) {}
+  for (var i = 0; i < mine; i += 1) {
     var 이동값 = 후보군.splice(Math.floor(Math.random() * 후보군.length), 1)[0];
     셔플.push(이동값);
   }
@@ -43,6 +46,7 @@ document.querySelector("#exec").addEventListener("click", function () {
     var arr = [];
     var tr = document.createElement("tr");
     dataset.push(arr);
+
     for (var j = 0; j < hor; j += 1) {
       arr.push(코드표.보통칸);
       var td = document.createElement("td");
@@ -89,7 +93,7 @@ document.querySelector("#exec").addEventListener("click", function () {
             dataset[줄][칸] = 코드표.보통칸;
           }
         }
-      });
+      }); //contextMenu
       td.addEventListener("click", function (e) {
         // return으로 함수의 실행을 중간에 끊을 수 있다.
         if (중단플래그) {
@@ -133,7 +137,6 @@ document.querySelector("#exec").addEventListener("click", function () {
           if (dataset[줄 - 1]) {
             //concat은 배열과 배열을 합쳐서 "새로운" 배열을 만들어요
             //concat은 새로운 배열을 만들고 다시 주변에 넣어야 한다.
-
             주변 = 주변.concat([
               dataset[줄 - 1][칸 - 1],
               dataset[줄 - 1][칸],
@@ -147,11 +150,13 @@ document.querySelector("#exec").addEventListener("click", function () {
               dataset[줄 + 1][칸 + 1],
             ]);
           }
-          var 주변지뢰개수 = 주변.filter(function (v) {
+          //filter함수
+          var 주변지뢰개수 = 주변.filter(function (i) {
             return [코드표.지뢰, 코드표.깃발지뢰, 코드표.물음표지뢰].includes(
-              v
+              i
             );
           }).length; //숫자
+
           //조건문같은 것에서 거짓인 값 '',0,NaN, null, undefined, false
           e.currentTarget.textContent = 주변지뢰개수 || "";
           dataset[줄][칸] = 코드표.연칸;
@@ -217,6 +222,7 @@ document.querySelector("#exec").addEventListener("click", function () {
     // 예 59
     // 59
     //배열은 index가 -1이 나오면 안됀다.
+
     var 가로 = Math.floor(셔플[k] / ver); //예 6 -> 5
     var 세로 = 셔플[k] % ver; // 예 9-> 8
     tbody.children[세로].children[가로].textContent = "X";
